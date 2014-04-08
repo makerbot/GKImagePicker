@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
                       'UIImagePickerController.'
   s.homepage       =  'https://github.com/makerbot/GKImagePicker'
   s.author         =  { 'David Boyle' => 'david.boyle@makerbot.com' }
-  s.source         =  { :git => 'https://github.com/gekitz/GKImagePicker.git', :tag => '0.0.1' }
+  s.source         =  { :git => 'https://github.com/gekitz/GKImagePicker.git', :tag => '0.0.2' }
   s.resources      =  'GKImages/*.png'
   s.source_files   =  'GKClasses/*.{h,m}'
   s.preserve_paths =  'GKClasses', 'GKImages'

@@ -50,7 +50,6 @@ static CGRect GKScaleRect(CGRect rect, CGFloat scale)
 @end
 
 @interface GKImageCropView ()<UIScrollViewDelegate>
-@property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIImageView *imageView;
 @property (nonatomic, strong) GKImageCropOverlayView *cropOverlayView;
 @property (nonatomic, assign) CGFloat xOffset;
@@ -95,6 +94,12 @@ static CGRect GKScaleRect(CGRect rect, CGFloat scale)
 
 #pragma mark -
 #pragma Public Methods
+
+- (CGPoint)croppedImageZoomOffset
+{
+    return CGPointMake(self.scrollView.contentOffset.x, self.scrollView.contentOffset.y);
+}
+
 
 - (UIImage *)croppedImage{
     

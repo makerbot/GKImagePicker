@@ -14,6 +14,11 @@
 @property (nonatomic, assign) CGSize cropSize;
 @property (nonatomic, assign) BOOL resizableCropArea;
 
+@property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, assign) CGPoint zoomOffset;
+@property (assign) float zoomScale;
+
 - (UIImage *)croppedImage;
+- (CGPoint)croppedImageZoomOffset;
 
 @end

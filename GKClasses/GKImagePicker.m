@@ -8,6 +8,7 @@
 
 #import "GKImagePicker.h"
 #import "GKImageCropViewController.h"
+#import "ImageUtils.h"
 
 @interface GKImagePicker ()<UIImagePickerControllerDelegate, UINavigationControllerDelegate, GKImageCropControllerDelegate>
 @property (nonatomic, strong, readwrite) UIImagePickerController *imagePickerController;
@@ -19,7 +20,7 @@
 #pragma mark -
 #pragma mark Getter/Setter
 
-@synthesize cropSize, delegate, resizeableCropArea;
+@synthesize cropSize, delegate;
 @synthesize imagePickerController = _imagePickerController;
 
 
@@ -28,12 +29,8 @@
 
 - (id)init{
     if (self = [super init]) {
-        
-        self.cropSize = CGSizeMake(320, 320);
-        self.resizeableCropArea = NO;
         _imagePickerController = [[UIImagePickerController alloc] init];
-        _imagePickerController.delegate = self;
-        _imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        _imagePickerController.delegate = self;;
     }
     return self;
 }
@@ -47,7 +44,7 @@
         
         [self.imagePickerController dismissViewControllerAnimated:YES completion:nil];
         
-    } 
+    }
     
 }
 
@@ -57,37 +54,44 @@
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
     
     if ([self.delegate respondsToSelector:@selector(imagePickerDidCancel:)]) {
-      
+		
         [self.delegate imagePickerDidCancel:self];
         
     } else {
         
         [self _hideController];
-    
+		
     }
     
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
-
-    GKImageCropViewController *cropController = [[GKImageCropViewController alloc] init];
-    cropController.contentSizeForViewInPopover = picker.contentSizeForViewInPopover;
-    cropController.sourceImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-    cropController.resizeableCropArea = self.resizeableCropArea;
-    cropController.cropSize = self.cropSize;
-    cropController.delegate = self;
-    [picker pushViewController:cropController animated:YES];
+	
+    self.cropController = [[GKImageCropViewController alloc] init];
+    self.cropController.contentSizeForViewInPopover = picker.contentSizeForViewInPopover;
+    
+    UIImage *chosenImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    self.cropController.sourceImage = [ImageUtils resizedImageForUpload:chosenImage];
+    
+    self.cropController.cropSize = self.cropSize;
+    self.cropController.delegate = self;
+    [picker pushViewController:self.cropController animated:YES];
     
 }
 
 #pragma mark -
 #pragma GKImagePickerDelegate
 
-- (void)imageCropController:(GKImageCropViewController *)imageCropController didFinishWithCroppedImage:(UIImage *)croppedImage{
-    
-    if ([self.delegate respondsToSelector:@selector(imagePicker:pickedImage:)]) {
-        [self.delegate imagePicker:self pickedImage:croppedImage];   
+- (void)imageCropController:(GKImageCropViewController *)imageCropController didFinishWithCroppedImage:(UIImage *)croppedImage andZoomOffset:(CGPoint)zoomOffset zoomScale:(float)zoomScale andOriginal:(UIImage *)originalImage setFeatured:(BOOL)featured
+{
+    if ([self.delegate respondsToSelector:@selector(imagePicker:pickedImage:andZoomOffset:zoomScale:andOriginal:)]) {
+        [self.delegate imagePicker:self pickedImage:croppedImage andZoomOffset:zoomOffset zoomScale:zoomScale andOriginal:originalImage];
     }
+}
+
+-(void)requestDeleteEditingImage
+{
+    NSLog(@"NOT NEEDED");
 }
 
 @end
